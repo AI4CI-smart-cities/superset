@@ -97,7 +97,7 @@ services:
     container_name: superset_websocket
     build: ./superset-websocket
     ports:
-      - 8080:8080
+      - 8087:8087
     extra_hosts:
       - "host.docker.internal:host-gateway"
     depends_on:
@@ -121,7 +121,7 @@ services:
       # do not use this docker compose in production
       - ./docker/superset-websocket/config.json:/home/superset-websocket/config.json
     environment:
-      - PORT=8080
+      - PORT=8087
       - REDIS_HOST=redis
       - REDIS_PORT=6379
       - REDIS_SSL=false
