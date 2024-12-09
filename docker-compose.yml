@@ -64,7 +64,6 @@ services:
   db:
     env_file:
       - docker/.env
-      - docker/.env-local
     image: postgres:15
     container_name: superset_db
     restart: unless-stopped
@@ -77,7 +76,6 @@ services:
   superset:
     env_file:
       - docker/.env
-      - docker/.env-local
     build:
       <<: *common-build
     container_name: superset_app
@@ -120,7 +118,6 @@ services:
     command: ["/app/docker/docker-init.sh"]
     env_file:
       - docker/.env
-      - docker/.env-local
     depends_on: *superset-depends-on
     user: *superset-user
     volumes: *superset-volumes
@@ -143,7 +140,6 @@ services:
     command: ["/app/docker/docker-frontend.sh"]
     env_file:
       - docker/.env
-      - docker/.env-local
     depends_on: *superset-depends-on
     volumes: *superset-volumes
 
@@ -154,7 +150,6 @@ services:
     command: ["/app/docker/docker-bootstrap.sh", "worker"]
     env_file:
       - docker/.env
-      - docker/.env-local
     environment:
       CELERYD_CONCURRENCY: 2
     restart: unless-stopped
@@ -173,7 +168,6 @@ services:
     command: ["/app/docker/docker-bootstrap.sh", "beat"]
     env_file:
       - docker/.env
-      - docker/.env-local
     restart: unless-stopped
     depends_on: *superset-depends-on
     user: *superset-user
@@ -188,7 +182,6 @@ services:
     command: ["/app/docker/docker-bootstrap.sh", "worker"]
     env_file:
       - docker/.env
-      - docker/.env-local
     profiles:
       - optional
     environment:
