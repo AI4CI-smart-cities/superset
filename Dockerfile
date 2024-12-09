@@ -83,6 +83,10 @@ RUN if [ "$BUILD_TRANSLATIONS" = "true" ]; then \
               /app/superset/translations/messages.pot
 
 
+# Ensure nginx.conf has proper permissions before copying
+COPY --chown=root:root ./path/to/nginx.conf /etc/nginx/nginx.conf
+RUN chmod 644 /etc/nginx/nginx.conf
+
 # Transition to Python base image
 FROM python:${PY_VER} AS python-base
 RUN pip install --no-cache-dir --upgrade setuptools pip uv
