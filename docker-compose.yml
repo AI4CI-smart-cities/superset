@@ -42,16 +42,17 @@ x-common-build: &common-build
     DEV_MODE: "true"
 
 services:
-  nginx:
+   nginx:
     image: nginx:latest
     container_name: superset_nginx
     restart: unless-stopped
     ports:
-      - "86:86"
+      - "82:82"
     extra_hosts:
       - "host.docker.internal:host-gateway"
     volumes:
-      - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - nginx-conf:/etc/nginx/nginx.conf:ro
+      
   redis:
     image: redis:7
     container_name: superset_cache
@@ -205,3 +206,10 @@ volumes:
     external: false
   redis:
     external: false
+  nginx-conf:
+    driver: local
+    driver_opts:
+      type: none
+      device: ./docker/nginx/nginx.conf
+      o: bind
+
