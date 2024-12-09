@@ -212,4 +212,3 @@ volumes:
       type: none
       device: ./docker/nginx/nginx.conf
       o: bind
-
