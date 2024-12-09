@@ -63,10 +63,7 @@ services:
 
   db:
     env_file:
-      - path: docker/.env # default
-        required: true
-      - path: docker/.env-local # optional override
-        required: false
+      - docker/.env # default
     image: postgres:15
     container_name: superset_db
     restart: unless-stopped
@@ -161,10 +158,7 @@ services:
     container_name: superset_node
     command: ["/app/docker/docker-frontend.sh"]
     env_file:
-      - path: docker/.env # default
-        required: true
-      - path: docker/.env-local # optional override
-        required: false
+      - docker/.env # default
     depends_on: *superset-depends-on
     volumes: *superset-volumes
 
