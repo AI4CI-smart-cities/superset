@@ -78,10 +78,8 @@ services:
 
   superset:
     env_file:
-      - path: docker/.env # default
-        required: true
-      - path: docker/.env-local # optional override
-        required: false
+      - docker/.env # default
+
     build:
       <<: *common-build
     container_name: superset_app
@@ -136,10 +134,7 @@ services:
     container_name: superset_init
     command: ["/app/docker/docker-init.sh"]
     env_file:
-      - path: docker/.env # default
-        required: true
-      - path: docker/.env-local # optional override
-        required: false
+      - docker/.env # default
     depends_on: *superset-depends-on
     user: *superset-user
     volumes: *superset-volumes
@@ -179,10 +174,7 @@ services:
     container_name: superset_worker
     command: ["/app/docker/docker-bootstrap.sh", "worker"]
     env_file:
-      - path: docker/.env # default
-        required: true
-      - path: docker/.env-local # optional override
-        required: false
+      - docker/.env # default
     environment:
       CELERYD_CONCURRENCY: 2
     restart: unless-stopped
@@ -203,10 +195,7 @@ services:
     container_name: superset_worker_beat
     command: ["/app/docker/docker-bootstrap.sh", "beat"]
     env_file:
-      - path: docker/.env # default
-        required: true
-      - path: docker/.env-local # optional override
-        required: false
+      - docker/.env # default
     restart: unless-stopped
     depends_on: *superset-depends-on
     user: *superset-user
@@ -220,10 +209,7 @@ services:
     container_name: superset_tests_worker
     command: ["/app/docker/docker-bootstrap.sh", "worker"]
     env_file:
-      - path: docker/.env # default
-        required: true
-      - path: docker/.env-local # optional override
-        required: false
+      - docker/.env # default
     profiles:
       - optional
     environment:
