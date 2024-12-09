@@ -84,7 +84,7 @@ RUN if [ "$BUILD_TRANSLATIONS" = "true" ]; then \
 
 
 # Ensure nginx.conf has proper permissions before copying
-COPY --chown=root:root ./path/to/nginx.conf /etc/nginx/nginx.conf
+COPY --chown=root:root ./docker/nginx/nginx.conf /etc/nginx/nginx.conf
 RUN chmod 644 /etc/nginx/nginx.conf
 
 # Transition to Python base image
