@@ -18,7 +18,7 @@
 # -----------------------------------------------------------------------
 # We don't support docker compose for production environments.
 # If you choose to use this type of deployment make sure to
-# create you own docker environment file (docker/.env) with your own
+# create your own docker environment file (docker/.env) with your own
 # unique random secure passwords and SECRET_KEY.
 # -----------------------------------------------------------------------
 x-superset-user: &superset-user root
@@ -63,10 +63,8 @@ services:
 
   db:
     env_file:
-      - path: docker/.env # default
-        required: true
-      - path: docker/.env-local # optional override
-        required: false
+      - docker/.env
+      - docker/.env-local
     image: postgres:15
     container_name: superset_db
     restart: unless-stopped
@@ -78,10 +76,8 @@ services:
 
   superset:
     env_file:
-      - path: docker/.env # default
-        required: true
-      - path: docker/.env-local # optional override
-        required: false
+      - docker/.env
+      - docker/.env-local
     build:
       <<: *common-build
     container_name: superset_app
@@ -106,23 +102,10 @@ services:
       - "host.docker.internal:host-gateway"
     depends_on:
       - redis
-    # Mount everything in superset-websocket into container and
-    # then exclude node_modules and dist with bogus volume mount.
-    # This is necessary because host and container need to have
-    # their own, separate versions of these files. .dockerignore
-    # does not seem to work when starting the service through
-    # docker compose.
-    #
-    # For example, node_modules may contain libs with native bindings.
-    # Those bindings need to be compiled for each OS and the container
-    # OS is not necessarily the same as host OS.
     volumes:
       - ./superset-websocket:/home/superset-websocket
       - /home/superset-websocket/node_modules
       - /home/superset-websocket/dist
-
-      # Mounting a config file that contains a dummy secret required to boot up.
-      # do not use this docker compose in production
       - ./docker/superset-websocket/config.json:/home/superset-websocket/config.json
     environment:
       - PORT=8080
@@ -136,10 +119,8 @@ services:
     container_name: superset_init
     command: ["/app/docker/docker-init.sh"]
     env_file:
-      - path: docker/.env # default
-        required: true
-      - path: docker/.env-local # optional override
-        required: false
+      - docker/.env
+      - docker/.env-local
     depends_on: *superset-depends-on
     user: *superset-user
     volumes: *superset-volumes
@@ -153,23 +134,16 @@ services:
       context: .
       target: superset-node
       args:
-        # This prevents building the frontend bundle since we'll mount local folder
-        # and build it on startup while firing docker-frontend.sh in dev mode, where
-        # it'll mount and watch local files and rebuild as you update them
         DEV_MODE: "true"
     environment:
-      # set this to false if you have perf issues running the npm i; npm run dev in-docker
-      # if you do so, you have to run this manually on the host, which should perform better!
       BUILD_SUPERSET_FRONTEND_IN_DOCKER: true
       NPM_RUN_PRUNE: false
       SCARF_ANALYTICS: "${SCARF_ANALYTICS:-}"
     container_name: superset_node
     command: ["/app/docker/docker-frontend.sh"]
     env_file:
-      - path: docker/.env # default
-        required: true
-      - path: docker/.env-local # optional override
-        required: false
+      - docker/.env
+      - docker/.env-local
     depends_on: *superset-depends-on
     volumes: *superset-volumes
 
@@ -179,10 +153,8 @@ services:
     container_name: superset_worker
     command: ["/app/docker/docker-bootstrap.sh", "worker"]
     env_file:
-      - path: docker/.env # default
-        required: true
-      - path: docker/.env-local # optional override
-        required: false
+      - docker/.env
+      - docker/.env-local
     environment:
       CELERYD_CONCURRENCY: 2
     restart: unless-stopped
@@ -193,9 +165,6 @@ services:
       - "host.docker.internal:host-gateway"
     healthcheck:
       test: ["CMD-SHELL", "celery -A superset.tasks.celery_app:app inspect ping -d celery@$$HOSTNAME"]
-    # Bump memory limit if processing selenium / thumbnails on superset-worker
-    # mem_limit: 2038m
-    # mem_reservation: 128M
 
   superset-worker-beat:
     build:
@@ -203,10 +172,8 @@ services:
     container_name: superset_worker_beat
     command: ["/app/docker/docker-bootstrap.sh", "beat"]
     env_file:
-      - path: docker/.env # default
-        required: true
-      - path: docker/.env-local # optional override
-        required: false
+      - docker/.env
+      - docker/.env-local
     restart: unless-stopped
     depends_on: *superset-depends-on
     user: *superset-user
@@ -220,10 +187,8 @@ services:
     container_name: superset_tests_worker
     command: ["/app/docker/docker-bootstrap.sh", "worker"]
     env_file:
-      - path: docker/.env # default
-        required: true
-      - path: docker/.env-local # optional override
-        required: false
+      - docker/.env
+      - docker/.env-local
     profiles:
       - optional
     environment:
